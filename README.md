@@ -1,18 +1,19 @@
-# Introduction to Prompt Engineering
+# Prompt Engineering
 
-This course teaches you how to craft effective prompts, no developer experience required.
+<img src="https://raw.githubusercontent.com/anton-roos/ai-skills/refs/heads/main/images/hollard-octocat-professor.png" align="right" height="150px" />
 
-## 🚀 Getting Started
+Purple Greetings Zanele2000!
 
-**The exercise is currently initializing...** ⏳
+Mona here. I'm done preparing your exercise. Hope you enjoy! 💜
 
-When you first visit this repository, GitHub Actions is automatically setting up your personalized learning environment. This process takes about 20-30 seconds.
+Open up the following links in new tabs.
 
-**Please refresh this page every few seconds until you see:**
-- A "**Go to Exercise**" button 
-- A "**Go to Codespace**" button
+[![Go to Exercise](https://img.shields.io/badge/Go%20to%20Exercise-%E2%86%92-e64600?style=for-the-badge&logo=github&labelColor=442359)](https://github.com/Zanele2000/ai-skills-prompt-engineering/issues/1)
 
-Once these buttons appear, open "**Go to Exercise** and **Go to Codespace**" in new tabs to begin your prompt engineering journey!
+[![Go to Codespace](https://img.shields.io/badge/Go%20to%20Codespace-%E2%86%92-e64600?style=for-the-badge&logo=github&labelColor=442359)](https://codespaces.new/Zanele2000/ai-skills-prompt-engineering)
+
+When it prompts you to create a codespace, click on `Create Codespace`
+<img src="https://raw.githubusercontent.com/anton-roos/ai-skills/refs/heads/main/images/create-workspace.png" align="center" />
 
 ---
 
