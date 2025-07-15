@@ -1,0 +1,26 @@
+{
+  "name": "Prompt Engineering Codespace",
+  
+  // Use the official VS Code dev container base image
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu",
+  
+  // Grant write access for the GitHub Actions bot
+  "features": {},
+  
+  // Extensions to improve Markdown editing
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "yzhang.markdown-all-in-one",
+        "DavidAnson.vscode-markdownlint",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot-chat",
+        "GitHub.copilot"
+      ],
+      "openFiles": ["CODESPACE.md"]
+    }
+  },
+  
+  // Optional post-create command
+  "postCreateCommand": "echo 'Codespace is ready! Edit prompts.md to get started.'"
+}

@@ -1,0 +1,92 @@
+name: Step 1
+
+on:
+  push:
+    paths:
+      - "my-prompts.yml"
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+env:
+  STEP_2_FILE: ".github/steps/2-step.md"
+
+jobs:
+  check_step_completion:
+    name: Check Step 1 Completion
+    runs-on: ubuntu-latest
+    outputs:
+      step_completed: ${{ steps.check-file.outputs.file_exists }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Check if my-prompts.yml exists and has content
+        id: check-file
+        run: |
+          if [ -f "my-prompts.yml" ] && [ -s "my-prompts.yml" ]; then
+            echo "file_exists=true" >> $GITHUB_OUTPUT
+            echo "✅ Found my-prompts.yml with content"
+          else
+            echo "file_exists=false" >> $GITHUB_OUTPUT
+            echo "❌ my-prompts.yml not found or empty"
+          fi
+
+  find_exercise:
+    name: Find Exercise Issue
+    needs: [check_step_completion]
+    if: needs.check_step_completion.outputs.step_completed == 'true'
+    uses: anton-roos/ai-skills/.github/workflows/find-exercise-issue.yml@main
+
+  post_next_step_content:
+    name: Post next step content
+    needs: [find_exercise, check_step_completion]
+    if: needs.check_step_completion.outputs.step_completed == 'true'
+    runs-on: ubuntu-latest
+    env:
+      ISSUE_REPOSITORY: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ needs.find_exercise.outputs.issue-number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get response templates
+        uses: actions/checkout@v4
+        with:
+          repository: anton-roos/ai-skills
+          path: ai-skills
+          ref: main
+
+      - name: Create comment - step finished
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: ai-skills/templates/step-finished-prepare-next-step.md
+          vars: |
+            next_step_number: 2
+          
+      - name: Create comment - add step content
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: ${{ env.STEP_2_FILE }}
+
+      - name: Create comment - watching for progress
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: ai-skills/templates/watching-for-progress.md
+
+      - name: Disable current workflow and enable next one
+        run: |
+          gh workflow disable "${{github.workflow}}"
+          gh workflow enable "Step 2"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

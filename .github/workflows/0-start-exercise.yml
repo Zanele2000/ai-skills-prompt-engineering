@@ -1,0 +1,73 @@
+name: Step 0
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+
+env:
+  STEP_1_FILE: ".github/steps/1-step.md"
+
+jobs:
+  start-exercise:
+    if: |
+      !github.event.repository.is_template
+    name: Start Exercise
+    uses: anton-roos/ai-skills/.github/workflows/start-exercise.yml@main
+    with:
+      exercise-title: "Prompt Engineering"
+      intro-message: 🎯 **Prompt Engineering Training!** Learn how to craft effective prompts - no developer experience required!
+
+  post_next_step_content:
+    name: Post next step content
+    runs-on: ubuntu-latest
+    needs: [start-exercise]
+    env:
+      ISSUE_URL: ${{ needs.start-exercise.outputs.issue-url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get response templates
+        uses: actions/checkout@v4
+        with:
+          repository: anton-roos/ai-skills
+          path: ai-skills
+          ref: main
+
+      - name: Create comment - add step content
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ needs.start-exercise.outputs.issue-number }}
+          repository: ${{ github.repository }}
+          file: ${{ env.STEP_1_FILE }}
+
+      - name: Create comment - watching for progress
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          issue-number: ${{ needs.start-exercise.outputs.issue-number }}
+          repository: ${{ github.repository }}
+          file: ai-skills/templates/watching-for-progress.md
+
+      - name: Update README with exercise started template
+        uses: skills/action-text-variables@v3
+        id: update-readme
+        with:
+          template-file: ${{ env.STEP_1_FILE }}
+          template-vars: |
+            title: Prompt Engineering with AI
+            login: ${{ github.actor }}
+            issue_url: ${{ needs.start-exercise.outputs.issue-url }}
+            intro_message: Learn to craft effective prompts using GitHub Actions - no developer experience required!
+
+      - name: Enable Step 1 workflow
+        run: |
+          gh workflow enable "Step 1"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
